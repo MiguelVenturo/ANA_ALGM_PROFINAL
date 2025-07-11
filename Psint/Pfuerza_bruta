@@ -1,0 +1,107 @@
+Algoritmo PROBLEMADEVARILLA_FUERZABRUTA_EF_UPN
+    Definir longitud_varilla, i Como Entero
+    Definir max_ganancia Como Real
+    
+    // Entrada de datos
+    Escribir "=== PROBLEMA DE VARILLAS - FUERZA BRUTA ==="
+    Escribir "Ingrese la longitud de la varilla: "
+    Leer longitud_varilla
+    
+    // Declarar arreglos (índice 0 no se usa, empezamos desde 1)
+    Dimension precios[longitud_varilla + 1]
+    
+    // Leer precios para cada longitud de corte
+    Escribir ""
+    Escribir "Ingrese el precio para cada longitud de corte:"
+    Para i <- 1 Hasta longitud_varilla Hacer
+        Escribir "Precio para corte de longitud ", i, ": $"
+        Leer precios[i]
+    FinPara
+    
+    // Calcular ganancia máxima
+    max_ganancia <- FuerzaBruta(longitud_varilla, precios)
+    
+    // Mostrar resultado
+    Escribir ""
+    Escribir "=== RESULTADO ==="
+    Escribir "Ganancia máxima posible: $", max_ganancia
+    
+    // Mostrar combinación óptima
+    Escribir ""
+    Escribir "Combinación óptima de cortes:"
+    MostrarSolucionOptima(longitud_varilla, precios)
+    
+FinAlgoritmo
+
+// Función recursiva de fuerza bruta
+Funcion ganancia <- FuerzaBruta(longitud_restante, precios)
+    Definir i Como Entero
+    Definir ganancia, ganancia_temporal, mejor_ganancia Como Real
+    
+    mejor_ganancia <- 0
+    
+    // Caso base: no queda longitud
+    Si longitud_restante <= 0 Entonces
+        ganancia <- 0
+    SiNo
+        // Probar cada longitud de corte posible (de 1 hasta longitud_restante)
+        Para i <- 1 Hasta longitud_restante Hacer
+            // Calcular ganancia con este corte
+            ganancia_temporal <- precios[i] + FuerzaBruta(longitud_restante - i, precios)
+            
+            // Actualizar si es mejor
+            Si ganancia_temporal > mejor_ganancia Entonces
+                mejor_ganancia <- ganancia_temporal
+            FinSi
+        FinPara
+        
+        ganancia <- mejor_ganancia
+    FinSi
+    
+FinFuncion
+
+// Mostrar la solución óptima
+Subproceso MostrarSolucionOptima(longitud_original, precios)
+    Definir longitud_actual, i, mejor_corte Como Entero
+    Definir mejor_ganancia, ganancia_temp Como Real
+    Dimension contador[longitud_original + 1]
+    
+    longitud_actual <- longitud_original
+    
+    // Inicializar contador
+    Para i <- 1 Hasta longitud_original Hacer
+        contador[i] <- 0
+    FinPara
+    
+    // Reconstruir la solución
+    Mientras longitud_actual > 0 Hacer
+        mejor_ganancia <- 0
+        mejor_corte <- 0
+        
+        // Encontrar el mejor corte para la longitud actual
+        Para i <- 1 Hasta longitud_actual Hacer
+            ganancia_temp <- precios[i] + FuerzaBruta(longitud_actual - i, precios)
+            
+            Si ganancia_temp > mejor_ganancia Entonces
+                mejor_ganancia <- ganancia_temp
+                mejor_corte <- i
+            FinSi
+        FinPara
+        
+        // Aplicar el mejor corte
+        Si mejor_corte > 0 Entonces
+            contador[mejor_corte] <- contador[mejor_corte] + 1
+            longitud_actual <- longitud_actual - mejor_corte
+        SiNo
+            longitud_actual <- 0
+        FinSi
+    FinMientras
+    
+    // Mostrar los cortes realizados
+    Para i <- 1 Hasta longitud_original Hacer
+        Si contador[i] > 0 Entonces
+            Escribir "- Corte de longitud ", i, " (precio $", precios[i], "): ", contador[i], " veces"
+        FinSi
+    FinPara
+    
+FinSubproceso

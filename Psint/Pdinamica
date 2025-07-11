@@ -1,0 +1,60 @@
+Algoritmo programacion_dinamica_TFUPN
+    Definir n, i, j Como Entero
+    Definir precios, dp Como Real
+    Dimension precios[101], dp[101]  
+    
+    Escribir "Ingrese longitud de la varilla:"
+    Leer n
+    
+    Para i <- 1 Hasta n Hacer
+        Escribir "Ingrese precio para longitud ", i, ":"
+        Leer precios[i]
+    FinPara
+    
+    // Inicializar tabla DP
+    dp[1] <- precios[1]  // Caso base: varilla de longitud 1
+    
+    // Llenar tabla DP de abajo hacia arriba
+    Para i <- 2 Hasta n Hacer
+        dp[i] <- precios[i]  // Inicializar con el precio de no cortar
+        Para j <- 1 Hasta i-1 Hacer
+            Si precios[j] + dp[i-j] > dp[i] Entonces
+                dp[i] <- precios[j] + dp[i-j]
+            FinSi
+        FinPara
+    FinPara
+    
+    Escribir "Beneficio máximo: ", dp[n]
+    
+    // Reconstruir solución
+    Escribir "Cortes realizados:"
+    reconstruirSolucion(n, precios, dp)
+FinAlgoritmo
+
+SubProceso reconstruirSolucion(n Por Referencia, precios, dp)
+    Definir i Como Entero
+    Definir encontrado Como Logico
+    
+    Mientras n > 0 Hacer
+        encontrado <- Falso
+        Para i <- 1 Hasta n Hacer
+            Si i = n Entonces
+                // Caso: no cortar la varilla restante
+                Si precios[i] = dp[n] Y encontrado = Falso Entonces
+                    Escribir "Corte de longitud: ", i
+                    n <- 0
+                    encontrado <- Verdadero
+                FinSi
+            SiNo
+                // Verificar que n-i sea válido (mayor que 0)
+                Si (n-i) > 0 Entonces
+                    Si precios[i] + dp[n-i] = dp[n] Y encontrado = Falso Entonces
+                        Escribir "Corte de longitud: ", i
+                        n <- n - i
+                        encontrado <- Verdadero
+                    FinSi
+                FinSi
+            FinSi
+        FinPara
+    FinMientras
+FinSubProceso
